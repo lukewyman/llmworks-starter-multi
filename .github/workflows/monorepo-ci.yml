@@ -11,14 +11,29 @@ jobs:
       services: ${{ steps.set-matrix.outputs.services }}
     steps:
       - uses: actions/checkout@v4
-      - id: set-matrix
-        run: |
-          SERVICES=$(ls -1 services 2>/dev/null \
-            | sed 's/^/services\//' \
-            | xargs -I{} sh -c '[ -f "{}/pyproject.toml" ] && echo {}' \
-            | jq -R -s 'split("\n")|map(select(length>0))')
-          echo "services=$SERVICES" >> "$GITHUB_OUTPUT"
 
+      - id: set-matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -d "services" ]; then
+            MAP=$(
+              ls -1 services 2>/dev/null \
+              | sed 's#^#services/#' \
+              | xargs -I{} sh -c '[ -f "{}/pyproject.toml" ] && echo {}' \
+              | jq -R -s -c 'split("\n")|map(select(length>0))'
+            )
+          else
+            MAP="[]"
+          fi
+
+          # Safety: if jq produced null (no lines), use empty array
+          if [ "$MAP" = "null" ] || [ -z "$MAP" ]; then
+            MAP="[]"
+          fi
+
+          echo "Discovered services matrix: $MAP"
+          echo "services=$MAP" >> "$GITHUB_OUTPUT"
   test:
     needs: discover
     runs-on: ubuntu-latest
@@ -33,11 +48,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
-
       - run: pip install uv
       - run: uv venv
       - run: uv pip install -e .[dev]
-
       - run: uv run ruff check .
       - run: uv run black --check .
       - run: uv run mypy .
