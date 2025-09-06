@@ -1,0 +1,13 @@
+{
+  "folders": [
+    { "path": "." },
+    { "path": "services/svc-1",
+      "name": "svc-1",
+      "settings": {
+        "python.defaultInterpreterPath": "${workspaceFolder:svc-1}/.venv/bin/python",
+        "python.testing.pytestArgs": ["${workspaceFolder:svc-1}"],
+        "python.analysis.extraPaths": ["${workspaceFolder:svc-1}/src"]
+      }
+    }
+  ]
+}

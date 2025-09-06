@@ -1,0 +1,44 @@
+name: monorepo-ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.set-matrix.outputs.services }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: set-matrix
+        run: |
+          SERVICES=$(ls -1 services 2>/dev/null \
+            | sed 's/^/services\//' \
+            | xargs -I{} sh -c '[ -f "{}/pyproject.toml" ] && echo {}' \
+            | jq -R -s 'split("\n")|map(select(length>0))')
+          echo "services=$SERVICES" >> "$GITHUB_OUTPUT"
+
+  test:
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: ${{ fromJson(needs.discover.outputs.services) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.service }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+
+      - run: pip install uv
+      - run: uv venv
+      - run: uv pip install -e .[dev]
+
+      - run: uv run ruff check .
+      - run: uv run black --check .
+      - run: uv run mypy .
+      - run: uv run pytest
