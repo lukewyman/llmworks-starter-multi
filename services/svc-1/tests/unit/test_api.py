@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+
 from svc_1.contracts.hello import HelloQuery
 from svc_1.main import app
 from svc_1.services.greeting import make_greeting

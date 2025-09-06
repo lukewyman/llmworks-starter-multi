@@ -34,20 +34,6 @@ include = ["svc_1*"]
 addopts = "-q --maxfail=1 --disable-warnings --cov=svc_1 --cov-report=term-missing"
 testpaths = ["tests"]
 
-[tool.black]
-line-length = 100
-
-[tool.ruff]
-line-length = 100
-[tool.ruff.lint]
-select = ["E","F","I","UP","N","B"]
-ignore = ["E203"]
-
-[tool.mypy]
-python_version = "3.12"
-strict = true
-ignore_missing_imports = true
-
 [tool.coverage.run]
 source = ["svc_1"]
 branch = true
@@ -59,4 +45,3 @@ exclude_lines = ["if __name__ == .__main__.:"]
 [tool.coverage.warnings]
 # Optional: quiet noisy warnings
 disable = ["module-not-measured","module-not-imported"]
-

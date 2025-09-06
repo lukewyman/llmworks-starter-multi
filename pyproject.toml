@@ -1,0 +1,18 @@
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E","F","I","UP","N","B"]
+ignore = ["E203"]
+
+# Add new services here as you create them
+[tool.ruff.lint.isort]
+known-first-party = ["svc_1"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true

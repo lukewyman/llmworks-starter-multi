@@ -1,5 +1,5 @@
+# .pre-commit-config.yaml
 repos:
-  # 🔧 Auto-fix formatting & imports across the whole repo
   - repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:
@@ -11,18 +11,7 @@ repos:
       - id: ruff
         args: ["--fix", "--show-fixes"]
 
-  # 🔒 Secret scanning
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.5.0
     hooks:
       - id: detect-secrets
-
-  # ✅ (Optional) Fan-out typecheck/tests only for changed services
-  #    This uses a local hook that runs a small script below.
-  # - repo: local
-  #   hooks:
-  #     - id: precommit-changed-services
-  #       name: precommit-changed-services
-  #       entry: bash scripts/precommit_changed_services.sh
-  #       language: system
-  #       pass_filenames: false
