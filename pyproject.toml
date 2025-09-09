@@ -10,7 +10,7 @@ ignore = ["E203"]
 
 # Add new services here as you create them
 [tool.ruff.lint.isort]
-known-first-party = ["svc_1"]
+known-first-party = ["svc_1", "svc_2"]
 
 [tool.mypy]
 python_version = "3.12"
