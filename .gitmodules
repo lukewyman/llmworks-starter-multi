@@ -1,0 +1,3 @@
+[submodule "tilt_modules/github.com/tilt-dev/tilt-extensions"]
+	path = tilt_modules/github.com/tilt-dev/tilt-extensions
+	url = https://github.com/tilt-dev/tilt-extensions
