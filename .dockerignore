@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite
+*.log
+.venv/
+uv.lock
+.git/
+.pytest_cache/
+.mypy_cache/

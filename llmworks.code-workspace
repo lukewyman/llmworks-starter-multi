@@ -1,13 +1,32 @@
 {
   "folders": [
     { "path": "." },
-    { "path": "services/svc-1",
+    {
+      "path": "services/svc-1",
       "name": "svc-1",
       "settings": {
         "python.defaultInterpreterPath": "${workspaceFolder:svc-1}/.venv/bin/python",
         "python.testing.pytestArgs": ["${workspaceFolder:svc-1}"],
         "python.analysis.extraPaths": ["${workspaceFolder:svc-1}/src"]
       }
+    },
+    {
+      "path": "services/svc-2",
+      "name": "svc-2",
+      "settings": {
+        "python.defaultInterpreterPath": "${workspaceFolder:svc-2}/.venv/bin/python",
+        "python.testing.pytestArgs": ["${workspaceFolder:svc-2}"],
+        "python.analysis.extraPaths": ["${workspaceFolder:svc-2}/src"]
+      }
     }
-  ]
+  ],
+  "settings": {
+    // Repo-wide editor defaults (optional but handy)
+    "editor.formatOnSave": true,
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/*.pyc": true,
+      "**/.pytest_cache": true
+    }
+  }
 }

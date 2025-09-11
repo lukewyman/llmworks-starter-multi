@@ -1,16 +1,19 @@
 # .pre-commit-config.yaml
+exclude: |
+  (?x)(
+    ^tilt_modules/
+  )
+
 repos:
   - repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:
       - id: black
-
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.7
+    rev: v0.6.1
     hooks:
       - id: ruff
-        args: ["--fix", "--show-fixes"]
-
+        args: [--fix]
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.5.0
     hooks:

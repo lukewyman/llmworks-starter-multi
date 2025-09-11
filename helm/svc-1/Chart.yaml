@@ -1,0 +1,6 @@
+apiVersion: v2
+name: svc-1
+description: svc-1 FastAPI service
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

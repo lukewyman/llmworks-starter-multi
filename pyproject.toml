@@ -1,14 +1,19 @@
 [tool.black]
 line-length = 100
+extend-exclude = '''
+(
+  ^tilt_modules/
+)
+'''
 
 [tool.ruff]
 line-length = 100
+exclude = ["tilt_modules"]
 
 [tool.ruff.lint]
 select = ["E","F","I","UP","N","B"]
 ignore = ["E203"]
 
-# Add new services here as you create them
 [tool.ruff.lint.isort]
 known-first-party = ["svc_1", "svc_2"]
 
