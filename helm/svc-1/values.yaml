@@ -1,0 +1,36 @@
+image:
+  repository: ghcr.io/lukewyman/llmworks/svc-1
+  tag: "tilt"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: svc-1.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+probes:
+  readiness:
+    path: /healthz
+    initialDelaySeconds: 2
+    periodSeconds: 10
+    timeoutSeconds: 1
+    failureThreshold: 3
+  liveness:
+    path: /healthz
+    initialDelaySeconds: 5
+    periodSeconds: 20
+    timeoutSeconds: 1
+    failureThreshold: 3
