@@ -34,3 +34,22 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+
+# Tilt
+tilt_modules/
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+
+# Terragrunt
+**/.terragrunt-cache/*
+
+# Plan/apply artifacts
+*.plan
+crash.log
+
+# Sensitive vars
+terraform.tfvars
+*.auto.tfvars
