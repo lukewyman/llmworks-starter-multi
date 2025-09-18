@@ -38,18 +38,16 @@ Thumbs.db
 # Tilt
 tilt_modules/
 
-# Terraform
-**/.terraform/*
-*.tfstate
-*.tfstate.*
+# Kubernetes
+*.kube/config
+.kube/cache/
+kubeconfig-*
 
-# Terragrunt
-**/.terragrunt-cache/*
+# Docker
+*.pid
+*.seed
+*.bak
+docker-compose.override.yml
 
-# Plan/apply artifacts
-*.plan
-crash.log
-
-# Sensitive vars
-terraform.tfvars
-*.auto.tfvars
+# GitOps / Flux (local caches)
+flux-system/
