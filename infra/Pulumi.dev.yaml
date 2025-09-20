@@ -1,8 +1,14 @@
 config:
   llmworks-starter-multi:awsRegion: us-west-2
   llmworks-starter-multi:clusterName: llmworks-dev
-  llmworks-starter-multi:clusterVersion: "1.29"
+  llmworks-starter-multi:clusterVersion: "1.30"
   llmworks-starter-multi:vpcCidr: 10.42.0.0/16
   llmworks-starter-multi:azs:
     - us-west-2a
     - us-west-2b
+  llmworks-starter-multi:nodeDesiredSize: "2"
+  llmworks-starter-multi:nodeMinSize: "1"
+  llmworks-starter-multi:nodeMaxSize: "3"
+  llmworks-starter-multi:nodeInstanceTypes:
+    - m5.large
+  llmworks-starter-multi:nodeCapacityType: SPOT

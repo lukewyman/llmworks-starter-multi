@@ -27,6 +27,7 @@ class Eks(pulumi.ComponentResource):
         cluster_version: str,
         vpc_id: str,
         private_subnets: list[str],
+        node_subnets: list[str] | None = None,
         node_group_name: str = "default",
         node_desired_size: int = 2,
         node_min_size: int = 1,
@@ -103,11 +104,14 @@ class Eks(pulumi.ComponentResource):
                 opts=pulumi.ResourceOptions(parent=node_role, provider=provider),
             )
 
+        # Choose subnets for the node group: default to private if not provided
+        ng_subnet_ids = node_subnets if node_subnets is not None else private_subnets
+
         aws.eks.NodeGroup(
             f"{cluster_name}-{node_group_name}",
             cluster_name=cluster.name,
             node_role_arn=node_role.arn,
-            subnet_ids=private_subnets,
+            subnet_ids=ng_subnet_ids,
             scaling_config=aws.eks.NodeGroupScalingConfigArgs(
                 desired_size=node_desired_size,
                 min_size=node_min_size,

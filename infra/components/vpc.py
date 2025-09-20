@@ -1,15 +1,14 @@
 # infra/components/vpc.py
 from __future__ import annotations
 
-import pulumi  # ✅ needed for ComponentResource
+import pulumi
 import pulumi_aws as aws
 
 
 class Vpc(pulumi.ComponentResource):
     """
-    Mirrors TF:
-      vars: name, region, vpc_cidr, azs
-      outs: vpc_id, private_subnets, public_subnets
+    vars:  name, region, vpc_cidr, azs
+    outs:  vpc_id, private_subnets, public_subnets
     """
 
     vpc_id: pulumi.Output[str]
@@ -18,9 +17,9 @@ class Vpc(pulumi.ComponentResource):
 
     def __init__(
         self,
-        resource_name: str,  # Pulumi resource name (internal)
+        resource_name: str,
         *,
-        name: str,  # TF-style name for tags/ids (human-facing)
+        name: str,
         region: str,
         vpc_cidr: str,
         azs: list[str],
@@ -41,6 +40,7 @@ class Vpc(pulumi.ComponentResource):
             opts=pulumi.ResourceOptions(parent=self, provider=provider),
         )
 
+        # Internet access for public subnets
         igw = aws.ec2.InternetGateway(
             f"{name}-igw",
             vpc_id=vpc.id,
@@ -58,12 +58,14 @@ class Vpc(pulumi.ComponentResource):
 
         public_ids: list[pulumi.Output[str]] = []
         private_ids: list[pulumi.Output[str]] = []
+        private_rts: list[aws.ec2.RouteTable] = []
 
         def cidr(base: str, third_octet: int, prefix: int) -> str:
             ip = base.split("/")[0]
             a, b, *_ = map(int, ip.split("."))
             return f"{a}.{b}.{third_octet}.0/{prefix}"
 
+        # Create public+private subnets per AZ
         for i, az in enumerate(azs):
             pub = aws.ec2.Subnet(
                 f"{name}-pub-{i}",
@@ -92,6 +94,46 @@ class Vpc(pulumi.ComponentResource):
                 opts=pulumi.ResourceOptions(parent=vpc, provider=provider),
             )
             private_ids.append(pri.id)
+
+            # Private route table per AZ (target to be added after NAT is created)
+            prt = aws.ec2.RouteTable(
+                f"{name}-pri-rt-{i}",
+                vpc_id=vpc.id,
+                tags={"Name": f"{name}-pri-rt-{i}"},
+                opts=pulumi.ResourceOptions(parent=vpc, provider=provider),
+            )
+            aws.ec2.RouteTableAssociation(
+                f"{name}-pri-rt-assoc-{i}",
+                route_table_id=prt.id,
+                subnet_id=pri.id,
+                opts=pulumi.ResourceOptions(parent=prt, provider=provider),
+            )
+            private_rts.append(prt)
+
+        # NEW: Single NAT for dev in the first public subnet
+        eip = aws.ec2.Eip(
+            f"{name}-nat-eip",
+            domain="vpc",
+            tags={"Name": f"{name}-nat-eip"},
+            opts=pulumi.ResourceOptions(parent=vpc, provider=provider),
+        )
+        nat = aws.ec2.NatGateway(
+            f"{name}-nat",
+            allocation_id=eip.id,
+            subnet_id=public_ids[0],  # place NAT in first public subnet
+            tags={"Name": f"{name}-nat"},
+            opts=pulumi.ResourceOptions(parent=vpc, provider=provider),
+        )
+
+        # NEW: Add default routes in private RTs via NAT
+        for i, prt in enumerate(private_rts):
+            aws.ec2.Route(
+                f"{name}-pri-rt-default-{i}",
+                route_table_id=prt.id,
+                destination_cidr_block="0.0.0.0/0",
+                nat_gateway_id=nat.id,
+                opts=pulumi.ResourceOptions(parent=prt, provider=provider),
+            )
 
         self.vpc_id = vpc.id
         self.public_subnets = pulumi.Output.all(*public_ids)
