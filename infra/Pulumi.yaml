@@ -1,6 +1,0 @@
-name: llmworks-starter-multi
-runtime:
-  name: python
-  options:
-    virtualenv: __pulumipy__
-description: Starter infra (Pulumi Python) with env stacks and component resources
