@@ -51,3 +51,13 @@ docker-compose.override.yml
 
 # GitOps / Flux (local caches)
 flux-system/
+
+
+# Pulumi
+__pulumipy__/
+__pycache__/
+*.pvc
+
+# venvs
+.venv/
+.env/
