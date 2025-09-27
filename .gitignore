@@ -51,3 +51,30 @@ docker-compose.override.yml
 
 # GitOps / Flux (local caches)
 flux-system/
+
+# --- OpenTofu / Terraform ---
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars.json
+*.tfvars
+.terraform/
+.terraform.lock.hcl
+
+# --- Terragrunt ---
+.terragrunt-cache/
+crash.log
+crash.*.log
+
+# --- Local overrides ---
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# --- Editor / OS clutter ---
+*.swp
+*.swo
+.DS_Store
+.idea/
+.vscode/
